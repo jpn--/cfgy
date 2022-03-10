@@ -15,6 +15,15 @@ class InputTable:
     keep_columns: list = RequireSetOf(str)
 
 
+@configclass(allow_arbitrary=False)
+class InputTableOnly:
+    tablename: str = RequireString(default=NODEFAULT, doc="Name of table")
+    filename: str = RequireString()
+    index_col: str = RequireString()
+    rename_columns: dict = RequireDictOfStrTo(str)
+    keep_columns: list = RequireSetOf(str)
+
+
 @configclass
 class OverallSettings:
     chunk_training_mode: str = Enumerated.Lowercase(
@@ -237,3 +246,48 @@ def test_underload(tmp_path):
     assert i.rename_columns == {"aa": "bb", "zz": "yy"}
     assert i.keep_columns == {"bb", "yy"}
     assert i.index_col == "IndexCol"
+
+
+def test_arbitrary_other_values(tmp_path):
+    f1 = dump(
+        tmp_path,
+        """
+    tablename: MyTablename
+    filename: MyFilename
+    rename_columns:
+        aa: bb
+        zz: yy
+    keep_columns:
+      - bb
+      - yy
+    other_thing: 123
+    """,
+    )
+    i = InputTable.initialize(f1)
+    assert isinstance(i, InputTable)
+    assert i.tablename == "MyTablename"
+    assert i.filename == "MyFilename"
+    assert i.rename_columns == {"aa": "bb", "zz": "yy"}
+    assert i.keep_columns == {"bb", "yy"}
+    assert i.index_col is None
+    assert i.other_thing == 123
+    assert InputTable.tablename.__doc__ == "Name of table"
+
+
+def test_no_arbitrary_other_values(tmp_path):
+    f1 = dump(
+        tmp_path,
+        """
+    tablename: MyTablename
+    filename: MyFilename
+    rename_columns:
+        aa: bb
+        zz: yy
+    keep_columns:
+      - bb
+      - yy
+    other_thing: 123
+    """,
+    )
+    with raises(ValueError, match="unexpected settings: {'other_thing': 123}"):
+        InputTableOnly.initialize(f1)

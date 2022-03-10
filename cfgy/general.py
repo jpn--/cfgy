@@ -151,6 +151,16 @@ class Enumerated(Setting):
         return value
 
 
+class RequireBool(TypeRequired):
+    """This setting must be a boolean (true or false)."""
+
+    def __init__(self, default=None, validators=(), doc=None):
+        super().__init__(type=bool, default=default, validators=validators, doc=doc)
+
+    def __repr__(self):
+        return "RequireBool"
+
+
 class RequireInteger(TypeRequired):
     """This setting must be an integer."""
 
@@ -476,13 +486,36 @@ class CascadingSettings:
         return cls(**source)
 
 
-def configclass(cls):
-    @dataclass
-    class CascadingSettingsDef(dataclass(cls), CascadingSettings):
-        pass
+class configclass:
+    def __new__(cls, baseclass=None, allow_arbitrary=True):
+        self = super().__new__(cls)
+        self.allow_arbitrary = allow_arbitrary
+        if baseclass is None:
+            return self
+        else:
+            return self.__call__(baseclass)
 
-    CascadingSettingsDef.__name__ = cls.__name__
-    CascadingSettingsDef.__qualname__ = cls.__qualname__
-    CascadingSettingsDef.__doc__ = cls.__doc__
-    CascadingSettingsDef.__module__ = cls.__module__
-    return CascadingSettingsDef
+    def __call__(self, baseclass):
+        @dataclass
+        class CascadingSettingsDef(dataclass(baseclass), CascadingSettings):
+            _allow_arbitrary = self.allow_arbitrary
+
+            def __init__(self, *args, **kwargs):
+                expects = self.__class__.__bases__[0].__dict__.keys()
+                expected_kwargs = {}
+                unexpected_kwargs = {}
+                for k, v in kwargs.items():
+                    if k in expects:
+                        expected_kwargs[k] = v
+                    else:
+                        unexpected_kwargs[k] = v
+                if not self._allow_arbitrary and unexpected_kwargs:
+                    raise ValueError(f"unexpected settings: {unexpected_kwargs!r}")
+                super().__init__(*args, **expected_kwargs)
+                self.__dict__.update(unexpected_kwargs)
+
+        CascadingSettingsDef.__name__ = baseclass.__name__
+        CascadingSettingsDef.__qualname__ = baseclass.__qualname__
+        CascadingSettingsDef.__doc__ = baseclass.__doc__
+        CascadingSettingsDef.__module__ = baseclass.__module__
+        return CascadingSettingsDef
