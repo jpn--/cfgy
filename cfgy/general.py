@@ -3,7 +3,7 @@ from dataclasses import dataclass, is_dataclass, replace
 from pathlib import Path
 from typing import Mapping, Sequence
 
-from addicty import Dict as _Addict
+from .yaml import yaml_load
 
 NODEFAULT = "< NO DEFAULT >"
 
@@ -461,7 +461,10 @@ class CascadingSettings:
         for k, v in source.items():
             attr = getattr(self.__class__, k, None)
             if not isinstance(attr, Setting):
-                raise ValueError(f"{k!r} is not a valid setting")
+                if self._allow_arbitrary:
+                    attr = Setting()
+                else:
+                    raise ValueError(f"{k!r} is not a valid setting")
             if k not in self.__dict__ or self.__dict__[k] is None:
                 v = attr.validate(v)
                 self.__dict__[k] = v
@@ -469,21 +472,24 @@ class CascadingSettings:
     def overload(self, filename):
         if isinstance(filename, Path):
             filename = str(filename)
-        source = _Addict.load(filename).to_dict()
+        source = yaml_load(filename)
         self._append_or_overwrite(source)
 
     def underload(self, filename):
         if isinstance(filename, Path):
             filename = str(filename)
-        source = _Addict.load(filename).to_dict()
+        source = yaml_load(filename)
         self._backfill(source)
 
     @classmethod
-    def initialize(cls, filename):
+    def initialize(cls, filename, *underfiles):
         if isinstance(filename, Path):
             filename = str(filename)
-        source = _Addict.load(filename).to_dict()
-        return cls(**source)
+        source = yaml_load(filename)
+        result = cls(**source)
+        for underfile in underfiles:
+            result.underload(underfile)
+        return result
 
 
 class configclass:

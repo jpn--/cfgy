@@ -3,6 +3,7 @@ from .general import (
     CascadingSettings,
     Enumerated,
     RequireA,
+    RequireBool,
     RequireDict,
     RequireDictOfStrTo,
     RequireInteger,

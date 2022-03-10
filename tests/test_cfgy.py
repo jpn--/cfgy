@@ -291,3 +291,99 @@ def test_no_arbitrary_other_values(tmp_path):
     )
     with raises(ValueError, match="unexpected settings: {'other_thing': 123}"):
         InputTableOnly.initialize(f1)
+
+
+def test_no_arbitrary_other_values_underfile(tmp_path):
+    f1 = dump(
+        tmp_path,
+        """
+        tablename: MyTablename
+        filename: MyFilename
+        rename_columns:
+            aa: bb
+            zz: yy
+        keep_columns:
+          - bb
+          - yy
+        """,
+    )
+    f2 = dump(
+        tmp_path,
+        """
+        other_thing: 123
+        """,
+    )
+    with raises(ValueError, match="'other_thing' is not a valid setting"):
+        InputTableOnly.initialize(f1, f2)
+
+
+def test_arbitrary_other_values_underfile(tmp_path):
+    f1 = dump(
+        tmp_path,
+        """
+        tablename: MyTablename
+        filename: MyFilename
+        rename_columns:
+            aa: bb
+            zz: yy
+        other_thing: 123
+        """,
+    )
+    f2 = dump(
+        tmp_path,
+        """
+        keep_columns:
+          - bb
+          - yy
+        """,
+    )
+    i = InputTable.initialize(f1, f2)
+    assert isinstance(i, InputTable)
+    assert i.tablename == "MyTablename"
+    assert i.filename == "MyFilename"
+    assert i.rename_columns == {"aa": "bb", "zz": "yy"}
+    assert i.keep_columns == {"bb", "yy"}
+    assert i.index_col is None
+    assert i.other_thing == 123
+
+
+def test_arbitrary_other_values_underfile2(tmp_path):
+    f1 = dump(
+        tmp_path,
+        """
+        tablename: MyTablename
+        filename: MyFilename
+        rename_columns:
+            aa: bb
+            zz: yy
+        """,
+    )
+    f2 = dump(
+        tmp_path,
+        """
+        keep_columns:
+          - bb
+          - yy
+        other_thing: 123
+        """,
+    )
+    i = InputTable.initialize(f1, f2)
+    assert isinstance(i, InputTable)
+    assert i.tablename == "MyTablename"
+    assert i.filename == "MyFilename"
+    assert i.rename_columns == {"aa": "bb", "zz": "yy"}
+    assert i.keep_columns == {"bb", "yy"}
+    assert i.index_col is None
+    assert i.other_thing == 123
+
+
+def test_bad_yaml(tmp_path):
+    f1 = dump(
+        tmp_path,
+        """
+        - top
+        level: mixed
+        """,
+    )
+    with raises(ValueError, match=".*syntax error.*"):
+        InputTable.initialize(f1)
