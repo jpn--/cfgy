@@ -1,0 +1,6 @@
+cfgy.demo.OverallSettings.chunk\_training\_mode
+===============================================
+
+.. currentmodule:: cfgy.demo
+
+.. autoattribute:: OverallSettings.chunk_training_mode

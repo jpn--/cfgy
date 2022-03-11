@@ -1,0 +1,6 @@
+cfgy.demo.OverallSettings.household\_sample\_size
+=================================================
+
+.. currentmodule:: cfgy.demo
+
+.. autoattribute:: OverallSettings.household_sample_size

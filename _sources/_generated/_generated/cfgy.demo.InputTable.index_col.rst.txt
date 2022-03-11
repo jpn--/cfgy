@@ -1,0 +1,6 @@
+cfgy.demo.InputTable.index\_col
+===============================
+
+.. currentmodule:: cfgy.demo
+
+.. autoattribute:: InputTable.index_col

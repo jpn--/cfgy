@@ -1,0 +1,6 @@
+cfgy.demo.InputTable.filename
+=============================
+
+.. currentmodule:: cfgy.demo
+
+.. autoattribute:: InputTable.filename

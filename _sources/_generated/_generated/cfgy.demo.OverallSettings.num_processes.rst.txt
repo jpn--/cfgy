@@ -1,0 +1,6 @@
+cfgy.demo.OverallSettings.num\_processes
+========================================
+
+.. currentmodule:: cfgy.demo
+
+.. autoattribute:: OverallSettings.num_processes

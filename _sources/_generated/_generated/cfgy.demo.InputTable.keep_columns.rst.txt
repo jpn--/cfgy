@@ -1,0 +1,6 @@
+cfgy.demo.InputTable.keep\_columns
+==================================
+
+.. currentmodule:: cfgy.demo
+
+.. autoattribute:: InputTable.keep_columns

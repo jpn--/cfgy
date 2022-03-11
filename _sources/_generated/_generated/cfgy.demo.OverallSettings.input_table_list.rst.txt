@@ -1,0 +1,6 @@
+cfgy.demo.OverallSettings.input\_table\_list
+============================================
+
+.. currentmodule:: cfgy.demo
+
+.. autoattribute:: OverallSettings.input_table_list

@@ -1,0 +1,6 @@
+cfgy.demo.OverallSettings.chunk\_size
+=====================================
+
+.. currentmodule:: cfgy.demo
+
+.. autoattribute:: OverallSettings.chunk_size

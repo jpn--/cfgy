@@ -1,0 +1,23 @@
+﻿cfgy.demo.OverallSettings
+=========================
+
+.. currentmodule:: cfgy.demo
+
+.. autoclass:: OverallSettings
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree: _generated
+      :template: configsetting.rst
+   
+      ~OverallSettings.chunk_size
+      ~OverallSettings.chunk_training_mode
+      ~OverallSettings.household_sample_size
+      ~OverallSettings.input_table_list
+      ~OverallSettings.input_table_one
+      ~OverallSettings.num_processes
+   
+   

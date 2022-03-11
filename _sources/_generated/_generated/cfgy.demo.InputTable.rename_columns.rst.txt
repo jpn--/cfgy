@@ -1,0 +1,6 @@
+cfgy.demo.InputTable.rename\_columns
+====================================
+
+.. currentmodule:: cfgy.demo
+
+.. autoattribute:: InputTable.rename_columns

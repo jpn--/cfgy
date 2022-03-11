@@ -1,0 +1,22 @@
+﻿cfgy.demo.InputTable
+====================
+
+.. currentmodule:: cfgy.demo
+
+.. autoclass:: InputTable
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree: _generated
+      :template: configsetting.rst
+   
+      ~InputTable.filename
+      ~InputTable.index_col
+      ~InputTable.keep_columns
+      ~InputTable.rename_columns
+      ~InputTable.tablename
+   
+   
