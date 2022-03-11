@@ -20,7 +20,7 @@ known_first_party = "cfgy"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-v --nbmake --disable-warnings"
+addopts = "-v --disable-warnings"
 testpaths = [
     "tests",
 ]
